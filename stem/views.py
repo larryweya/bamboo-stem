@@ -44,4 +44,5 @@ def dataset_create(request):
     dataset.save()
     DBSession.flush()
     return HTTPFound(
-        request.route_url('user', traverse=('datasets', dataset.dataset_id)))
+        request.route_url('user', traverse=(
+            user.username, 'datasets', dataset.dataset_id)))

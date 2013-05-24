@@ -54,7 +54,7 @@ class TestViews(unittest.TestCase):
         result = dataset_create(request)
         self.assertIsInstance(result, HTTPFound)
         self.assertEqual(
-            result.location, "%(host)s/datasets/123456" %
+            result.location, "%(host)s/bob/datasets/123456" %
                              {'host': request.host_url})
 
 
@@ -93,12 +93,12 @@ class TestViewIntegration(unittest.TestCase):
         DBSession.remove()
 
     def test_user_show(self):
-        self._create_user("one")
-        response = self.testapp.get('/one')
+        self._create_user("bob")
+        response = self.testapp.get('/bob')
         self.assertEqual(response.status_code, 200)
 
     def test_dataset_show(self):
-        user = self._create_user("one")
+        user = self._create_user("bob")
         dataset = self._create_dataset(user.id, "123456", "http://bamboo.io")
         response = self.testapp.get(
             '/%(user)s/datasets/%(dataset_id)s' % (
@@ -106,9 +106,10 @@ class TestViewIntegration(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_dataset_create(self):
-        user = self._create_user("one")
+        user = self._create_user("bob")
         params = {'url': 'http://bamboo.io/datasets/123456'}
         response = self.testapp.post(
             '/%(user)s/datasets/new' % ({'user': user.username}), params)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.location, "http://localhost/datasets/123456")
+        self.assertEqual(
+            response.location, "http://localhost/bob/datasets/123456")
