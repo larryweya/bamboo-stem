@@ -19,6 +19,8 @@ requires = [
     'uwsgi',
     'MySQL-python',
     'webtest',
+    'fabric',
+    'uwsgi',
 ]
 
 setup(name='stem',
