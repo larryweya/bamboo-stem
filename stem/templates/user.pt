@@ -17,14 +17,16 @@
                 <thead>
                 <tr>
                     <td>#</td>
-                    <td>URL</td>
+                    <td>Host</td>
+                    <td>Dataset ID</td>
                     <td>Date Created</td>
                 </tr>
                 </thead>
                 <tbody>
                 <tr tal:repeat="dataset user.datasets">
                     <td>${repeat.dataset.number}</td>
-                    <td><a href="${dataset.url(request)}">${dataset.bamboo_url}</a></td>
+                    <td>${dataset.bamboo_host}</td>
+                    <td><a href="${dataset.url(request)}">${dataset.dataset_id}</a></td>
                     <td>${dataset.added_on}</td>
                 </tr>
                 </tbody>
