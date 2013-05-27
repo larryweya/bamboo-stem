@@ -2,6 +2,17 @@
     <metal:container fill-slot="container">
         <div class="span12">
             <h2>Datasets</h2>
+
+            <form action="${request.route_url('user', traverse=(user.username, 'datasets', 'new'))}" method="POST">
+                <fieldset>
+                    <legend>Add a dataset</legend>
+                    <label>Dataset URL</label>
+                    <input type="text" name="url" placeholder="e.g. http://bamboo.io/datasets/123abcd567" class="input-xxlarge" />
+                    <span class="help-block">The full URL to the bamboo dataset.</span>
+                    <button type="submit" class="btn">Submit</button>
+                </fieldset>
+            </form>
+
             <table class="table">
                 <thead>
                 <tr>

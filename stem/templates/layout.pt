@@ -47,7 +47,7 @@
 
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="active"><a href="${user.url(request)}">Datasets</a></li>
+                        <li tal:define="url user.url(request)" tal:attributes="{'class': 'active' if request.url==url else None}"><a href="${url}">Datasets</a></li>
                         <li><a href="#about">Dashboards</a></li>
                     </ul>
                 </div>
