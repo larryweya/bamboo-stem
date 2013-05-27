@@ -8,25 +8,46 @@
 angular.module('BambooUI.services', [])
     .value('version', '0.1')
     .service('BambooAPI', ['$q', '$rootScope', function ($q, $rootScope) {
+        var applyScopeSafe = function(func){
+            if(!$rootScope.$$phase) {
+                $rootScope.$apply(func);
+            }
+            else {
+                func();
+            }
+        };
+
         return {
             queryInfo: function (dataset_id) {
                 var deferred = $q.defer();
                 var dataset = new bamboo.Dataset({id: dataset_id});
                 dataset.query_info(function(result){
-                    $rootScope.$apply(function(){
-                       deferred.resolve(result);
+                    applyScopeSafe(function(){
+                        deferred.resolve(result);
                     });
                 });
                 return deferred.promise;
             },
-            queryCalculations: function (dataset_id, callback) {
+            queryCalculations: function (dataset_id) {
+                var deferred = $q.defer();
                 var dataset = new bamboo.Dataset({id: dataset_id});
-                dataset.query_calculations(callback);
+                dataset.query_calculations(function(result){
+                    applyScopeSafe(function(){
+                        deferred.resolve(result);
+                    });
+                });
+                return deferred.promise;
             },
 
-            addCalculation: function (dataset_id, name, formula, callback) {
+            addCalculation: function (dataset_id, name, formula) {
+                var deferred = $q.defer();
                 var dataset = new bamboo.Dataset({id: dataset_id});
-                dataset.add_calculation(name, formula, callback);
+                dataset.add_calculation(name, formula, function(result){
+                    applyScopeSafe(function(){
+                        deferred.resolve(result);
+                    });
+                });
+                return deferred.promise;
             },
 
             removeCalculation: function (dataset_id, name) {

@@ -1,32 +1,13 @@
 <metal:main use-macro="load: layout.pt">
     <metal:container fill-slot="container">
         <div class="span12">
-            <div tal:repeat="message request.session.pop_flash()" class="alert">
-                <button class="close" data-dismiss="alert">×</button>
-                <strong>Warning!</strong> ${message}
-            </div>
-            <div tal:repeat="message request.session.pop_flash('success')"
-                 class="alert alert-success">
-                <button class="close" data-dismiss="alert">×</button>
-                <strong>Success!</strong> ${message}
-            </div>
-            <div tal:repeat="message request.session.pop_flash('info')"
-                 class="alert alert-info">
-                <button class="close" data-dismiss="alert">×</button>
-                <strong>Info!</strong> ${message}
-            </div>
-            <div tal:repeat="message request.session.pop_flash('error')"
-                 class="alert alert-error">
-                <button class="close" data-dismiss="alert">×</button>
-                <strong>Error!</strong> ${message}
-            </div>
             <h2>Datasets</h2>
 
             <form action="${request.route_url('user', traverse=(user.username, 'datasets', 'new'))}" method="POST">
                 <fieldset>
                     <legend>Add a dataset</legend>
                     <label>Dataset URL</label>
-                    <input type="text" name="url" placeholder="e.g. http://bamboo.io/datasets/123abcd567" class="input-xxlarge" />
+                    <input type="text" name="url" placeholder="e.g. http://bamboo.io/datasets/bb9bdf69384b4400a08fcf7ecc4b0a01" class="input-xxlarge" />
                     <span class="help-block">The full URL to the bamboo dataset.</span>
                     <button type="submit" class="btn">Submit</button>
                 </fieldset>

@@ -35,7 +35,7 @@ def main(argv=sys.argv):
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        user = User(username="internews")
+        user = User(username="larryweya")
         dataset = Dataset(
             user=user, bamboo_host="http://bamboo.io",
             dataset_id="d59dee1092e74e2da947ac75c7b5fcfa")

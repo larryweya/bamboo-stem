@@ -3,6 +3,9 @@
 /* Controllers */
 
 angular.module('BambooUI.controllers', [])
+    .controller('DatasetListController', ['$scope', function ($scope, BambooAPI) {
+
+    }])
     .controller('InfoCtrl', ['$scope', 'BambooAPI', function ($scope, BambooAPI) {
         $scope.info = {};
 
@@ -11,26 +14,42 @@ angular.module('BambooUI.controllers', [])
             $scope.info = result;
         });
     }])
-    .controller('CalculationsCtrl', ['$scope', 'BambooAPI', function ($scope, BambooAPI) {
+    .controller('CalculationsCtrl', ['$scope', 'BambooAPI', '$dialog', function ($scope, BambooAPI, $dialog) {
         $scope.calculations = [];
         $scope.new_calculation = {name: null, formula: null};
 
-        BambooAPI.queryCalculations(dataset_id, function(result){
-            $scope.calculations = result;
-        });
+        $scope.refreshCalculations = function(){
+            var promise = BambooAPI.queryCalculations(dataset_id);
+            promise.then(function(result){
+                $scope.calculations = result;
+            });
+        };
 
-        $scope.createCalculation = function(){
-            BambooAPI.addCalculation(
+        $scope.createCalculation = function () {
+            var promise = BambooAPI.addCalculation(
                 dataset_id, $scope.new_calculation['name'],
-                $scope.new_calculation['formula'], function(result){
-                    console.log(result);
-                });
+                $scope.new_calculation['formula']);
+            promise.then(function(result){
+                 $scope.refreshCalculations();
+            });
         };
 
         $scope.removeCalculation = function(calculation){
-            BambooAPI.removeCalculation(dataset_id, calculation.name);
-            $scope.calculations.pop(calculation);
+            var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
+            $dialog.messageBox("Delete!", "Delete Calculation?", btns)
+                .open()
+                .then(function (result) {
+                    if(result === 'ok')
+                    {
+                        BambooAPI.removeCalculation(
+                            dataset_id, calculation.name);
+                        $scope.calculations.splice(
+                            $scope.calculations.indexOf(calculation), 1);
+                    }
+                });
         };
+
+        $scope.refreshCalculations();
     }])
     .controller('AggregationsCtrl', [function () {
 
