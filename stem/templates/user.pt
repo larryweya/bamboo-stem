@@ -1,14 +1,26 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
-<head>
-  <title>Bamboo Stem</title>
-  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-  <meta name="keywords" content="bamboo frontend ui" />
-  <meta name="description" content="bamboo frontend" />
-  <!--[if lte IE 6]>
-    <link rel="stylesheet" href="${request.static_url('stem:static/ie6.css')}" type="text/css" media="screen" charset="utf-8" />
-  <![endif]-->
-</head>
-<body>
-</body>
-</html>
+<metal:main use-macro="load: layout.pt">
+    <metal:container fill-slot="container">
+        <div class="span12">
+            <h2>Datasets</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>#</td>
+                    <td>URL</td>
+                    <td>Date Created</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr tal:repeat="dataset user.datasets">
+                    <td>${repeat.dataset.number}</td>
+                    <td><a href="${dataset.url(request)}">${dataset.bamboo_url}</a></td>
+                    <td>Mon Jul 23rd 2012</td>
+                </tr>
+                </tbody>
+                <tfoot>
+
+                </tfoot>
+            </table>
+        </div>
+    </metal:container>
+</metal:main>

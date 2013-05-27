@@ -6,6 +6,7 @@ from pyramid.httpexceptions import (
     HTTPFound,
     HTTPNotFound,
     HTTPForbidden,
+    HTTPBadRequest,
 )
 
 from .models import (DBSession, Base, User, Dataset, DatasetFactory)
@@ -37,7 +38,7 @@ class TestViews(unittest.TestCase):
         request = testing.DummyRequest()
         user = User(username="bob")
         dataset = Dataset(
-            dataset_id="12345678", url="http://bamboo.io")
+            dataset_id="12345678", bamboo_host="http://bamboo.io")
         dataset.__parent__ = user
         request.context = dataset
         result = dataset_show(request)
@@ -57,6 +58,20 @@ class TestViews(unittest.TestCase):
             result.location, "%(host)s/bob/datasets/123456" %
                              {'host': request.host_url})
 
+    def test_dataset_create_catches_duplicate_datasets(self):
+        from .views import dataset_create
+        request = testing.DummyRequest()
+        user = User(username="bob")
+        dataset = Dataset(
+            user=user, bamboo_host="http://bamboo.io", dataset_id="123456")
+        DBSession.add(user)
+        DBSession.flush()
+        dataset_factory = DatasetFactory(request)
+        dataset_factory.__parent__ = user
+        request.context = dataset_factory
+        request.POST['url'] = "http://bamboo.io/datasets/123456"
+        self.assertRaises(HTTPBadRequest, dataset_create, request)
+
 
 class ModelTests(unittest.TestCase):
     def test_dataset_extract_values_from_url(self):
@@ -66,7 +81,7 @@ class ModelTests(unittest.TestCase):
         dataset.extract_values_from_url(source_url)
         expected_url = "http://bamboo.io"
         expected_dataset_id = "12345678"
-        self.assertEqual(dataset.url, expected_url)
+        self.assertEqual(dataset.bamboo_host, expected_url)
         self.assertEqual(dataset.dataset_id, expected_dataset_id)
 
 
@@ -84,7 +99,8 @@ class TestViewIntegration(unittest.TestCase):
         return User.query().first()
 
     def _create_dataset(self, user_id, dataset_id, url):
-        dataset = Dataset(user_id=user_id, dataset_id=dataset_id, url=url)
+        dataset = Dataset(
+            user_id=user_id, dataset_id=dataset_id, bamboo_host=url)
         with transaction.manager:
             DBSession.add(dataset)
         return Dataset.query().first()

@@ -3,10 +3,11 @@ from pyramid.httpexceptions import (
     HTTPFound,
     HTTPNotFound,
     HTTPForbidden,
+    HTTPBadRequest,
 )
 from pyramid.view import view_config
 
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import DBAPIError, IntegrityError
 
 from .models import (
     DBSession,
@@ -41,8 +42,13 @@ def dataset_create(request):
     user = request.context.__parent__
     dataset = Dataset(user=user)
     dataset.extract_values_from_url(request.POST['url'])
+    # check for a duplicate
     dataset.save()
-    DBSession.flush()
-    return HTTPFound(
-        request.route_url('user', traverse=(
-            user.username, 'datasets', dataset.dataset_id)))
+    try:
+        DBSession.flush()
+    except IntegrityError:
+        raise HTTPBadRequest("The dataset already exists in your account")
+    else:
+        return HTTPFound(
+            request.route_url('user', traverse=(
+                user.username, 'datasets', dataset.dataset_id)))

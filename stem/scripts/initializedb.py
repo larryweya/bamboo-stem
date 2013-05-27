@@ -13,6 +13,7 @@ from ..models import (
     DBSession,
     Base,
     User,
+    Dataset,
 )
 
 
@@ -34,5 +35,8 @@ def main(argv=sys.argv):
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        model = User(username="internews")
-        DBSession.add(model)
+        user = User(username="internews")
+        dataset = Dataset(
+            user=user, bamboo_host="http://bamboo.io",
+            dataset_id="d59dee1092e74e2da947ac75c7b5fcfa")
+        DBSession.add(user)

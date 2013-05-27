@@ -128,6 +128,10 @@ class User(Base):
             factory.__name__ = key
             return factory
 
+    def url(self, request):
+        return request.route_url(
+            'user', traverse=(self.username,))
+
 
 class Dataset(Base):
     # TODO: make dataset_id and user_id unique together
@@ -136,12 +140,20 @@ class Dataset(Base):
         Index('uix_user_id_dataset_id', 'user_id', 'dataset_id', unique=True),)
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    url = Column(String(100), nullable=False)
+    bamboo_host = Column(String(100), nullable=False)
     dataset_id = Column(String(100), nullable=False)
     user = relationship('User', backref=backref('datasets'))
 
-    def extract_values_from_url(self, url):
-        groups = re.match(dataset_regexp, url).groups()
-        self.url = groups[0]
+    def extract_values_from_url(self, bamboo_host):
+        groups = re.match(dataset_regexp, bamboo_host).groups()
+        self.bamboo_host = groups[0]
         self.dataset_id = groups[1]
 
+    @property
+    def bamboo_url(self):
+        return "%(url)s/datasets/%(dataset_id)s" % (
+            {'url':self.bamboo_host, 'dataset_id': self.dataset_id})
+
+    def url(self, request):
+        return request.route_url(
+            'user', traverse=(self.user.username, 'datasets', self.dataset_id,))
