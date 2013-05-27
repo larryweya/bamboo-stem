@@ -1,6 +1,25 @@
 <metal:main use-macro="load: layout.pt">
     <metal:container fill-slot="container">
         <div class="span12">
+            <div tal:repeat="message request.session.pop_flash()" class="alert">
+                <button class="close" data-dismiss="alert">×</button>
+                <strong>Warning!</strong> ${message}
+            </div>
+            <div tal:repeat="message request.session.pop_flash('success')"
+                 class="alert alert-success">
+                <button class="close" data-dismiss="alert">×</button>
+                <strong>Success!</strong> ${message}
+            </div>
+            <div tal:repeat="message request.session.pop_flash('info')"
+                 class="alert alert-info">
+                <button class="close" data-dismiss="alert">×</button>
+                <strong>Info!</strong> ${message}
+            </div>
+            <div tal:repeat="message request.session.pop_flash('error')"
+                 class="alert alert-error">
+                <button class="close" data-dismiss="alert">×</button>
+                <strong>Error!</strong> ${message}
+            </div>
             <h2>Datasets</h2>
 
             <form action="${request.route_url('user', traverse=(user.username, 'datasets', 'new'))}" method="POST">
@@ -25,7 +44,7 @@
                 <tr tal:repeat="dataset user.datasets">
                     <td>${repeat.dataset.number}</td>
                     <td><a href="${dataset.url(request)}">${dataset.bamboo_url}</a></td>
-                    <td>Mon Jul 23rd 2012</td>
+                    <td>${dataset.added_on}</td>
                 </tr>
                 </tbody>
                 <tfoot>

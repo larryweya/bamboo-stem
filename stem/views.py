@@ -37,7 +37,7 @@ def dataset_show(request):
 
 
 @view_config(context=DatasetFactory, route_name='user', name='new',
-             request_method='POST')
+             request_method='POST', renderer='templates/user.pt')
 def dataset_create(request):
     user = request.context.__parent__
     dataset = Dataset(user=user)
@@ -47,8 +47,11 @@ def dataset_create(request):
     try:
         DBSession.flush()
     except IntegrityError:
-        raise HTTPBadRequest("The dataset already exists in your account")
+        DBSession.rollback()
+        request.session.flash(
+            u"The dataset already exists in your account.", "error")
     else:
         return HTTPFound(
             request.route_url('user', traverse=(
                 user.username, 'datasets', dataset.dataset_id)))
+    return {'user': user}

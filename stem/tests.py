@@ -70,7 +70,8 @@ class TestViews(unittest.TestCase):
         dataset_factory.__parent__ = user
         request.context = dataset_factory
         request.POST['url'] = "http://bamboo.io/datasets/123456"
-        self.assertRaises(HTTPBadRequest, dataset_create, request)
+        result = dataset_create(request)
+        self.assertNotIsInstance(result, HTTPFound)
 
 
 class ModelTests(unittest.TestCase):

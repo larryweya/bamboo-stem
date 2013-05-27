@@ -3,8 +3,7 @@ import re
 from pyramid.security import (Allow, Deny, Everyone, Authenticated,
                               ALL_PERMISSIONS, DENY_ALL)
 
-from sqlalchemy import (Column, Integer, String, Text, Boolean, Float,
-                        ForeignKey, Sequence, Table, event, Enum)
+from sqlalchemy import (Column, Integer, String, ForeignKey, DateTime, func)
 
 from sqlalchemy.orm import (relationship, backref, synonym)
 
@@ -143,6 +142,8 @@ class Dataset(Base):
     bamboo_host = Column(String(100), nullable=False)
     dataset_id = Column(String(100), nullable=False)
     user = relationship('User', backref=backref('datasets'))
+    added_on = Column(DateTime(
+        timezone=True), nullable=False, default=func.now())
 
     def extract_values_from_url(self, bamboo_host):
         groups = re.match(dataset_regexp, bamboo_host).groups()
