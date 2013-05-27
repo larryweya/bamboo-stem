@@ -1,0 +1,3 @@
+[submodule "stem/static/bamboo.js"]
+	path = stem/static/bamboo.js
+	url = git://github.com/modilabs/bamboo.js.git
